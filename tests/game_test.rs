@@ -1,7 +1,7 @@
-use alpha_quart::game::Player;
-use alpha_quart::policies::Policy;
-use alpha_quart::policies::RandomPolicy;
-use alpha_quart::runner::Runner;
+use quart_engine::game::Player;
+use quart_engine::policies::Policy;
+use quart_engine::policies::RandomPolicy;
+use quart_engine::runner::Runner;
 use tqdm::tqdm;
 
 #[test]
