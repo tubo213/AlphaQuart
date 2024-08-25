@@ -1,28 +1,26 @@
-use alpha_quart::game::Game;
 use alpha_quart::game::Player;
 use alpha_quart::policies::Policy;
 use alpha_quart::policies::RandomPolicy;
+use alpha_quart::runner::Runner;
 use tqdm::tqdm;
 
 #[test]
-fn test_random_game() {
-    // random policy vs random policyで10000回ゲームを実行する
-    for i in tqdm(0..10000) {
-        println!("Executing game run: {}", i + 1);
-        let mut game = Game::new();
+fn test_random_policy() {
+    let num_trials = 10000;
+    // random policy vs random policyでnum_trials回ゲームを実行する
+    let mut win_count = 0;
+    for _ in tqdm(0..num_trials) {
         let player1 = RandomPolicy::new();
         let player2 = RandomPolicy::new();
-
-        while !game.is_game_over() {
-            let action;
-            if matches!(game.current_player, Player::Player1) {
-                action = player1.action(&game);
-            } else {
-                action = player2.action(&game);
+        let mut runner = Runner::new(Box::new(player1), Box::new(player2));
+        let winner = runner.run();
+        if winner.is_some() {
+            if matches!(winner.unwrap(), Player::Player1) {
+                win_count += 1;
             }
-            game.play_turn(action.row, action.col, action.piece_index)
-                .unwrap();
-            game.switch_player();
         }
     }
+    // 勝率を表示
+    let win_rate = win_count as f64 / num_trials as f64;
+    println!("Win rate: {}", win_rate);
 }

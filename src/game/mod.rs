@@ -2,35 +2,50 @@ pub mod board;
 pub mod piece;
 pub mod player;
 pub use board::Board;
-pub use piece::{Color, Height, Piece, Shape, Surface};
+pub use piece::Piece;
 pub use player::Player;
 
+use rand;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Game {
     pub board: Board,
     pub available_pieces: Vec<Piece>,
+    pub selected_piece: Piece,
     pub current_player: Player,
 }
 
 impl Game {
     pub fn new() -> Self {
-        let available_pieces = Game::create_pieces();
+        let mut available_pieces = Game::create_pieces();
+        // 最初のターンはどのpieceを選んでも同じなので、ランダムに最初のpieceを選ぶ
+        let selected_piece: Piece =
+            available_pieces.remove(rand::random::<usize>() % available_pieces.len());
         Game {
             board: Board::new(),
             available_pieces,
+            selected_piece,
             current_player: Player::Player1,
         }
     }
 
     pub fn create_pieces() -> Vec<Piece> {
         let mut pieces = Vec::new();
-        for &color in &[Color::Black, Color::White] {
-            for &shape in &[Shape::Round, Shape::Square] {
-                for &height in &[Height::Tall, Height::Short] {
-                    for &surface in &[Surface::Hollow, Surface::Solid] {
-                        pieces.push(Piece::new(color, shape, height, surface));
+        for color in 0..2 {
+            // Loop over colors 0 (Black), 1 (White)
+            for shape in 0..2 {
+                // Loop over shapes 0 (Round), 1 (Square)
+                for height in 0..2 {
+                    // Loop over heights 0 (Tall), 1 (Short)
+                    for surface in 0..2 {
+                        // Loop over surfaces 0 (Hollow), 1 (Solid)
+                        pieces.push(Piece::new(
+                            color as u8,
+                            shape as u8,
+                            height as u8,
+                            surface as u8,
+                        ));
                     }
                 }
             }
@@ -40,12 +55,13 @@ impl Game {
 
     pub fn play_turn(&mut self, row: usize, col: usize, piece_index: usize) -> Result<(), String> {
         let piece = self.available_pieces.remove(piece_index);
-        self.board.place_piece(row, col, piece)?;
 
-        if self.board.check_win() {
-            println!("{:?} wins!", self.current_player);
-            return Ok(());
-        }
+        // selected_pieceを置いた後に、selected_pieceを更新する
+        self.board.place_piece(row, col, self.selected_piece)?;
+        self.selected_piece = piece;
+
+        // ターンが終了したら、current_playerを切り替える
+        self.switch_player();
 
         Ok(())
     }
@@ -59,6 +75,20 @@ impl Game {
 
     pub fn is_game_over(&self) -> bool {
         self.board.check_win() || self.available_pieces.is_empty()
+    }
+
+    // 勝者がいる場合はSome(Player)を返し、引き分けの場合はNoneを返す
+    // is_game_over()でゲームが終了しているかを確認してから呼び出すこと
+    pub fn judge_winner(&self) -> Option<Player> {
+        if self.board.check_win() {
+            match self.current_player {
+                // 直前のプレイヤーが勝者
+                Player::Player1 => Some(Player::Player2),
+                Player::Player2 => Some(Player::Player1),
+            }
+        } else {
+            None
+        }
     }
 
     pub fn to_json(&self) -> String {

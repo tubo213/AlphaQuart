@@ -72,15 +72,10 @@ impl Board {
     ) -> bool {
         match (a, b, c, d) {
             (Some(p1), Some(p2), Some(p3), Some(p4)) => {
-                let all_same_color =
-                    p1.color == p2.color && p2.color == p3.color && p3.color == p4.color;
-                let all_same_shape =
-                    p1.shape == p2.shape && p2.shape == p3.shape && p3.shape == p4.shape;
-                let all_same_height =
-                    p1.height == p2.height && p2.height == p3.height && p3.height == p4.height;
-                let all_same_surface = p1.surface == p2.surface
-                    && p2.surface == p3.surface
-                    && p3.surface == p4.surface;
+                let all_same_color = p1.color == p2.color && p2.color == p3.color && p3.color == p4.color;
+                let all_same_shape = p1.shape == p2.shape && p2.shape == p3.shape && p3.shape == p4.shape;
+                let all_same_height = p1.height == p2.height && p2.height == p3.height && p3.height == p4.height;
+                let all_same_surface = p1.surface == p2.surface && p2.surface == p3.surface && p3.surface == p4.surface;
 
                 all_same_color || all_same_shape || all_same_height || all_same_surface
             }

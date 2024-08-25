@@ -1,39 +1,16 @@
 use serde::{Deserialize, Serialize};
 
+// Define traits as simple integers
 #[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
-pub enum Color {
-    Black,
-    White,
-}
-
-#[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
-pub enum Shape {
-    Round,
-    Square,
-}
-
-#[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
-pub enum Height {
-    Tall,
-    Short,
-}
-
-#[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
-pub enum Surface {
-    Hollow,
-    Solid,
-}
-
-#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
 pub struct Piece {
-    pub color: Color,
-    pub shape: Shape,
-    pub height: Height,
-    pub surface: Surface,
+    pub color: u8,  // 0 for Black, 1 for White
+    pub shape: u8,  // 0 for Round, 1 for Square
+    pub height: u8, // 0 for Tall, 1 for Short
+    pub surface: u8, // 0 for Hollow, 1 for Solid
 }
 
 impl Piece {
-    pub fn new(color: Color, shape: Shape, height: Height, surface: Surface) -> Self {
+    pub fn new(color: u8, shape: u8, height: u8, surface: u8) -> Self {
         Piece {
             color,
             shape,
