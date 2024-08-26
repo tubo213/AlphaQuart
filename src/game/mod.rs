@@ -12,7 +12,7 @@ use serde::{Deserialize, Serialize};
 pub struct Game {
     pub board: Board,
     pub available_pieces: Vec<Piece>,
-    pub selected_piece: Piece,
+    pub selected_piece: Option<Piece>,
     pub current_player: Player,
 }
 
@@ -20,8 +20,8 @@ impl Game {
     pub fn new() -> Self {
         let mut available_pieces = Game::create_pieces();
         // 最初のターンはどのpieceを選んでも同じなので、ランダムに最初のpieceを選ぶ
-        let selected_piece: Piece =
-            available_pieces.remove(rand::random::<usize>() % available_pieces.len());
+        let selected_piece =
+            Some(available_pieces.remove(rand::random::<usize>() % available_pieces.len()));
         Game {
             board: Board::new(),
             available_pieces,
@@ -53,12 +53,23 @@ impl Game {
         pieces
     }
 
-    pub fn play_turn(&mut self, row: usize, col: usize, piece_index: usize) -> Result<(), String> {
-        let piece = self.available_pieces.remove(piece_index);
+    pub fn play_turn(
+        &mut self,
+        row: usize,
+        col: usize,
+        piece_index: Option<usize>,
+    ) -> Result<(), String> {
+        // selected_pieceを置く
+        self.board
+            .place_piece(row, col, self.selected_piece.unwrap())?;
 
-        // selected_pieceを置いた後に、selected_pieceを更新する
-        self.board.place_piece(row, col, self.selected_piece)?;
-        self.selected_piece = piece;
+        // 選ばれたpieceをavailable_piecesから取り除く
+        if piece_index.is_some() {
+            let piece_index = piece_index.unwrap();
+            self.selected_piece = Some(self.available_pieces.remove(piece_index));
+        } else {
+            self.selected_piece = None;
+        }
 
         // ターンが終了したら、current_playerを切り替える
         self.switch_player();
