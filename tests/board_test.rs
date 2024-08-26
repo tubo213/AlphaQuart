@@ -114,16 +114,22 @@ mod tests {
     fn test_available_positions() {
         let mut board = Board::new();
         let piece = Piece::new(0, 0, 0, 0);
+        let piece2 = Piece::new(0, 0, 0, 1);
 
         board.place_piece(0, 0, piece).unwrap();
+        board.place_piece(0, 1, piece2).unwrap();
         let positions = board.available_positions();
         assert_eq!(
             positions.len(),
-            15,
-            "1つピースを置いた後は残り15のポジションが利用可能なはず"
+            14,
+            "1つピースを置いた後は残り14のポジションが利用可能なはず"
         );
         assert!(
             !positions.contains(&(0, 0)),
+            "置いた位置は利用可能なポジションに含まれない"
+        );
+        assert!(
+            !positions.contains(&(0, 1)),
             "置いた位置は利用可能なポジションに含まれない"
         );
     }

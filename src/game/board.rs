@@ -68,15 +68,17 @@ impl Board {
 
     // ピースが置かれていないセルの位置を高速に取得
     pub fn available_positions(&self) -> Vec<(usize, usize)> {
-        let mut positions = Vec::new();
-        let mut remaining = self.empty_cells;
-
-        while remaining != 0 {
-            let pos = remaining.trailing_zeros() as usize; // 最下位の1ビットの位置を取得
-            positions.push((pos / 4, pos % 4)); // 行と列に変換
-            remaining &= remaining - 1; // 最下位の1ビットをクリア
+        let mut positions = Vec::with_capacity(16); // 最大16セルの空きがある可能性があるため、あらかじめ容量を確保
+        let mut empty_cells = self.empty_cells;
+    
+        while empty_cells != 0 {
+            let pos = empty_cells.trailing_zeros() as usize; // 1が立っている最初のビット位置を取得
+            let row = pos / 4;
+            let col = pos % 4;
+            positions.push((row, col));
+            empty_cells &= empty_cells - 1; // 1が立っているビットをクリア
         }
-
+    
         positions
     }
 
