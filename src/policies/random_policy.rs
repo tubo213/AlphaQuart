@@ -20,19 +20,21 @@ impl Policy for RandomPolicy {
             .filter(|&(row, col)| game.board.grid[row][col].is_none())
             .collect();
 
-        // 利用可能な位置やピースがない場合のエラーチェック
-        if available_positions.is_empty() || game.available_pieces.is_empty() {
-            panic!("No available moves or pieces left.");
+        // 利用可能な位置がない場合のエラーチェック
+        if available_positions.is_empty() {
+            panic!("No available moves left.");
         }
 
         // 利用可能なピースとそのインデックスをベクタに収集する
         let available_pieces_with_index: Vec<(usize, &Piece)> =
             game.available_pieces.iter().enumerate().collect();
 
-        // 利用可能なピースからランダムに一つ選ぶ
-        let (piece_index, _piece) = available_pieces_with_index
-            .choose(&mut rng)
-            .expect("No available pieces found.");
+        let piece_index: Option<usize>;
+        if game.available_pieces.is_empty() {
+            piece_index = None;
+        } else {
+            piece_index = Some(available_pieces_with_index.choose(&mut rng).unwrap().0);
+        }
 
         // ランダムな位置を選ぶ
         let position = available_positions
@@ -42,7 +44,7 @@ impl Policy for RandomPolicy {
         Action {
             row: position.0,
             col: position.1,
-            piece_index: *piece_index,
+            piece_index: piece_index,
         }
     }
 }

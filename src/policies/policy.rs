@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 pub struct Action {
     pub row: usize,
     pub col: usize,
-    pub piece_index: usize,
+    pub piece_index: Option<usize>,
 }
 
 impl Action {
