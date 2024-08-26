@@ -1,8 +1,8 @@
 use crate::game::Game;
-use crate::game::Piece;
 use crate::policies::policy::{Action, Policy};
 use rand::seq::SliceRandom;
 use rand::thread_rng;
+use rand::Rng;
 
 pub struct RandomPolicy {}
 
@@ -22,15 +22,12 @@ impl Policy for RandomPolicy {
             panic!("No available moves left.");
         }
 
-        // 利用可能なピースとそのインデックスをベクタに収集する
-        let available_pieces_with_index: Vec<(usize, &Piece)> =
-            game.available_pieces.iter().enumerate().collect();
-
         let piece_index: Option<usize>;
         if game.available_pieces.is_empty() {
             piece_index = None;
         } else {
-            piece_index = Some(available_pieces_with_index.choose(&mut rng).unwrap().0);
+            // ランダムなピースを選ぶ
+            piece_index = Some(rng.gen_range(0..game.available_pieces.len()));
         }
 
         // ランダムな位置を選ぶ
