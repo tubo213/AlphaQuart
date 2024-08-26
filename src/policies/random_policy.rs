@@ -4,6 +4,7 @@ use rand::seq::SliceRandom;
 use rand::thread_rng;
 use rand::Rng;
 
+#[derive(Clone)]
 pub struct RandomPolicy {}
 
 impl Policy for RandomPolicy {
