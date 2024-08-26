@@ -26,7 +26,7 @@ impl Runner {
                 action = self.player2.action(&self.game);
             }
             self.game
-                .play_turn(action.row, action.col, action.piece_index)
+                .play_turn(action.row, action.col, Some(action.piece_index))
                 .unwrap();
         }
         
