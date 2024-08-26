@@ -2,7 +2,6 @@
 mod tests {
     pub use quart_engine::game::board::Board;
     pub use quart_engine::game::piece::Piece;
-    pub use quart_engine::game::Game;
 
     #[test]
     fn test_initial_board_state() {
@@ -40,9 +39,9 @@ mod tests {
     #[test]
     fn test_check_win_row() {
         let mut board = Board::new();
-        let piece1 = Piece::new(0, 0, 0, 0); // すべての属性が0
-        let piece2 = Piece::new(0, 0, 0, 1);
-        let piece3 = Piece::new(0, 0, 1, 0);
+        let piece1 = Piece::new(0, 1, 0, 0);
+        let piece2 = Piece::new(0, 1, 0, 1);
+        let piece3 = Piece::new(1, 1, 1, 0);
         let piece4 = Piece::new(0, 1, 0, 0);
 
         board.place_piece(0, 0, piece1).unwrap();
@@ -59,10 +58,10 @@ mod tests {
     #[test]
     fn test_check_win_column() {
         let mut board = Board::new();
-        let piece1 = Piece::new(0, 0, 0, 0);
-        let piece2 = Piece::new(1, 0, 0, 0);
-        let piece3 = Piece::new(0, 1, 0, 0);
-        let piece4 = Piece::new(0, 0, 1, 0);
+        let piece1 = Piece::new(0, 0, 0, 1);
+        let piece2 = Piece::new(1, 0, 0, 1);
+        let piece3 = Piece::new(0, 1, 0, 1);
+        let piece4 = Piece::new(0, 0, 1, 1);
 
         board.place_piece(0, 0, piece1).unwrap();
         board.place_piece(1, 0, piece2).unwrap();

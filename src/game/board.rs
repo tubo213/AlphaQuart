@@ -155,10 +155,26 @@ impl Board {
     }
 
     fn check_line(&self, mask: u16) -> bool {
-        (self.color_board & mask == mask)
-            || (self.shape_board & mask == mask)
-            || (self.height_board & mask == mask)
-            || (self.surface_board & mask == mask)
+        // maskで指定されたラインが埋まっているかを判定する
+        if self.empty_cells & mask != 0 {
+            return false;
+        }
+
+        // 各属性のビットボードがすべて0またはすべて1かを確認
+        let color_match = self.color_board & mask;
+        let shape_match = self.shape_board & mask;
+        let height_match = self.height_board & mask;
+        let surface_match = self.surface_board & mask;
+
+        // どれか一つの属性が揃っている場合に勝利
+        color_match == 0
+            || color_match == mask
+            || shape_match == 0
+            || shape_match == mask
+            || height_match == 0
+            || height_match == mask
+            || surface_match == 0
+            || surface_match == mask
     }
 }
 
