@@ -97,8 +97,12 @@ impl Board {
             let position = 1 << (row * 4 + col);
 
             for &(board, value) in &attributes {
-                let temp_board = if value == 0 { *board | position } else { *board };
-                
+                let temp_board = if value == 0 {
+                    *board | position
+                } else {
+                    *board
+                };
+
                 // 勝利判定をビット演算で確認
                 if WINNING_MASKS.iter().any(|&mask| temp_board & mask == mask) {
                     return Some((row, col)); // 勝利できる位置を返す
@@ -123,24 +127,24 @@ impl Board {
                 if self.empty_cells & position == 0 {
                     // ピースが配置されている場合
                     let color = if self.color_board & position != 0 {
-                        1
+                        0 // color_boardにビットが立っている場合は0（黒）
                     } else {
-                        0
+                        1 // 立っていない場合は1（白）
                     };
                     let shape = if self.shape_board & position != 0 {
-                        1
+                        0 // shape_boardにビットが立っている場合は0（丸）
                     } else {
-                        0
+                        1 // 立っていない場合は1（四角）
                     };
                     let height = if self.height_board & position != 0 {
-                        1
+                        0 // height_boardにビットが立っている場合は0（高い）
                     } else {
-                        0
+                        1 // 立っていない場合は1（低い）
                     };
                     let surface = if self.surface_board & position != 0 {
-                        1
+                        0 // surface_boardにビットが立っている場合は0（穴あり）
                     } else {
-                        0
+                        1 // 立っていない場合は1（穴なし）
                     };
                     grid[row][col] = Some(Piece::new(color, shape, height, surface));
                 }
