@@ -53,18 +53,17 @@ impl Game {
         pieces
     }
 
-    pub fn play_turn(&mut self, row: usize, col: usize, piece_index: usize) -> bool {
+    pub fn play_turn(&mut self, row: usize, col: usize, piece_index: usize) -> Result<(), String> {
         let piece = self.available_pieces.remove(piece_index);
 
         // selected_pieceを置いた後に、selected_pieceを更新する
-        self.board.place_piece(row, col, self.selected_piece);
+        self.board.place_piece(row, col, self.selected_piece)?;
         self.selected_piece = piece;
 
         // ターンが終了したら、current_playerを切り替える
         self.switch_player();
 
-        // bool
-        true
+        Ok(())
     }
 
     pub fn switch_player(&mut self) {
