@@ -1,26 +1,38 @@
 use quart_engine::game::Player;
-use quart_engine::policies::Policy;
-use quart_engine::policies::RandomPolicy;
+use quart_engine::policies::{Policy, RandomPolicy, GreedyRandomPolicy};
 use quart_engine::runner::Runner;
 use tqdm::tqdm;
 
-#[test]
-fn test_random_policy() {
-    let num_trials = 10000;
-    // random policy vs random policyでnum_trials回ゲームを実行する
+const NUM_TRIALS: u64 = 10000;
+
+// 汎用的なテスト関数を定義
+fn test_policy_vs_policy<P1, P2>(
+    player1_policy: P1,
+    player2_policy: P2,
+    description: &str,
+)
+where
+    P1: Policy + Clone + 'static,
+    P2: Policy + Clone + 'static,
+{
     let mut win_count = 0;
-    for _ in tqdm(0..num_trials) {
-        let player1 = RandomPolicy::new();
-        let player2 = RandomPolicy::new();
-        let mut runner = Runner::new(Box::new(player1), Box::new(player2));
+    for _ in tqdm(0..NUM_TRIALS) {
+        let mut runner = Runner::new(Box::new(player1_policy.clone()), Box::new(player2_policy.clone()));
         let winner = runner.run();
-        if winner.is_some() {
-            if matches!(winner.unwrap(), Player::Player1) {
-                win_count += 1;
-            }
+        if let Some(Player::Player1) = winner {
+            win_count += 1;
         }
     }
-    // 勝率を表示
-    let win_rate = win_count as f64 / num_trials as f64;
-    println!("Win rate: {}", win_rate);
+    let win_rate = win_count as f64 / NUM_TRIALS as f64;
+    println!("{} Win rate: {}", description, win_rate);
+}
+
+#[test]
+fn test_random_vs_random_policy() {
+    test_policy_vs_policy(RandomPolicy::new(), RandomPolicy::new(), "Random vs Random Policy");
+}
+
+#[test]
+fn test_random_vs_greedy_random_policy() {
+    test_policy_vs_policy(GreedyRandomPolicy::new(), RandomPolicy::new(), "Greedy Random vs Random Policy");
 }

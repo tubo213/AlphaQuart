@@ -2,7 +2,7 @@ use crate::game::Game;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Action {
     pub row: usize,
     pub col: usize,
