@@ -12,7 +12,7 @@ use serde::{Deserialize, Serialize};
 pub struct Game {
     pub board: Board,
     pub available_pieces: Vec<Piece>,
-    pub selected_piece: Option<Piece>,
+    pub selected_piece: Piece,
     pub current_player: Player,
 }
 
@@ -21,7 +21,7 @@ impl Game {
         let mut available_pieces = Game::create_pieces();
         // 最初のターンはどのpieceを選んでも同じなので、ランダムに最初のpieceを選ぶ
         let selected_piece =
-            Some(available_pieces.remove(rand::random::<usize>() % available_pieces.len()));
+            available_pieces.remove(rand::random::<usize>() % available_pieces.len());
         Game {
             board: Board::new(),
             available_pieces,
@@ -60,15 +60,12 @@ impl Game {
         piece_index: Option<usize>,
     ) -> Result<(), String> {
         // selected_pieceを置く
-        self.board
-            .place_piece(row, col, self.selected_piece.unwrap())?;
+        self.board.place_piece(row, col, self.selected_piece)?;
 
         // 選ばれたpieceをavailable_piecesから取り除く
         if piece_index.is_some() {
             let piece_index = piece_index.unwrap();
-            self.selected_piece = Some(self.available_pieces.remove(piece_index));
-        } else {
-            self.selected_piece = None;
+            self.selected_piece = self.available_pieces.remove(piece_index);
         }
 
         // ターンが終了したら、current_playerを切り替える
