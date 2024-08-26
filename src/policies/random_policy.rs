@@ -15,10 +15,7 @@ impl Policy for RandomPolicy {
         let mut rng = thread_rng();
 
         // 利用可能な位置を取得する
-        let available_positions: Vec<(usize, usize)> = (0..4)
-            .flat_map(|row| (0..4).map(move |col| (row, col)))
-            .filter(|&(row, col)| game.board.grid[row][col].is_none())
-            .collect();
+        let available_positions: Vec<(usize, usize)> = game.board.available_positions();
 
         // 利用可能な位置がない場合のエラーチェック
         if available_positions.is_empty() {

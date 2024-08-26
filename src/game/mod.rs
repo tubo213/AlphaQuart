@@ -85,8 +85,7 @@ impl Game {
     }
 
     pub fn is_game_over(&self) -> bool {
-        let board_is_full = self.available_pieces.is_empty() && self.selected_piece.is_none();
-        self.board.check_win() || board_is_full
+        self.board.check_win() || self.board.is_full()
     }
 
     // 勝者がいる場合はSome(Player)を返し、引き分けの場合はNoneを返す

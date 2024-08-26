@@ -6,7 +6,7 @@ use tqdm::tqdm;
 
 #[test]
 fn test_random_policy() {
-    let num_trials = 10000;
+    let num_trials = 1000000;
     // random policy vs random policyでnum_trials回ゲームを実行する
     let mut win_count = 0;
     for _ in tqdm(0..num_trials) {
