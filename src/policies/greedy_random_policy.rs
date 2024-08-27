@@ -1,5 +1,6 @@
 use crate::game::Game;
 use crate::policies::policy::{Action, Policy};
+use rand::prelude::SliceRandom;
 use rand::thread_rng;
 use rand::Rng;
 
@@ -13,12 +14,6 @@ impl Policy for GreedyRandomPolicy {
 
     fn action(&self, game: &Game) -> Action {
         let mut rng = thread_rng();
-        let available_positions: Vec<(usize, usize)> = game.board.available_positions();
-        // 利用可能な位置がない場合のエラーチェック
-        if available_positions.is_empty() {
-            panic!("No available moves left.");
-        }
-
         let winning_cell = game.board.find_winning_cell(game.selected_piece);
 
         if winning_cell.is_some() {
@@ -33,8 +28,20 @@ impl Policy for GreedyRandomPolicy {
             };
         } else {
             // 勝利する手がない場合は、置いて、渡したときに負けない手を返す
+
+            // available_positionsとavailable_piecesをシャッフル
+            let mut available_positions: Vec<(usize, usize)> = game.board.available_positions();
+            // 利用可能な位置がない場合のエラーチェック
+            if available_positions.is_empty() {
+                panic!("No available moves left.");
+            }
+            available_positions.shuffle(&mut rng);
+            let mut available_pieces = game.available_pieces.clone();
+            available_pieces.shuffle(&mut rng);
+
+            // positionとpieceの組合せで、負けない手を全探索
             for cand_position in available_positions.iter() {
-                for piece in game.available_pieces.iter() {
+                for piece in available_pieces.iter() {
                     // 一手進めたゲームを作成
                     let mut game_copy = game.clone();
                     let piece_index = game_copy.available_pieces.iter().position(|&x| x == *piece);
@@ -61,6 +68,7 @@ impl Policy for GreedyRandomPolicy {
         } else {
             piece_index = Some(rng.gen_range(0..game.available_pieces.len()));
         }
+        let available_positions = game.board.available_positions();
         Action {
             row: available_positions[0].0,
             col: available_positions[0].1,
