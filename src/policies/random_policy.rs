@@ -43,3 +43,30 @@ impl Policy for RandomPolicy {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::policies::random_policy::RandomPolicy;
+    use crate::policies::test_utils::*;
+
+    #[test]
+    fn test_random_policy_action() {
+        test_policy_action(RandomPolicy::new());
+    }
+
+    #[test]
+    fn test_random_policy_game_progression() {
+        test_policy_game_progression(RandomPolicy::new());
+    }
+
+    #[test]
+    fn test_random_policy_no_available_positions() {
+        test_policy_no_available_positions(RandomPolicy::new());
+    }
+
+    #[test]
+    fn test_random_policy_no_available_pieces() {
+        test_policy_no_available_pieces(RandomPolicy::new());
+    }
+}

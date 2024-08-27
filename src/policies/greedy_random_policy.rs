@@ -55,10 +55,43 @@ impl Policy for GreedyRandomPolicy {
         }
 
         // どの手も負ける場合は、ランダムな手を返す
+        let piece_index: Option<usize>;
+        if game.available_pieces.is_empty() {
+            piece_index = None;
+        } else {
+            piece_index = Some(rng.gen_range(0..game.available_pieces.len()));
+        }
         Action {
             row: available_positions[0].0,
             col: available_positions[0].1,
-            piece_index: Some(rng.gen_range(0..game.available_pieces.len())),
+            piece_index: piece_index,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::policies::greedy_random_policy::GreedyRandomPolicy;
+    use crate::policies::test_utils::*;
+
+    #[test]
+    fn test_greedy_random_policy_action() {
+        test_policy_action(GreedyRandomPolicy::new());
+    }
+
+    #[test]
+    fn test_greedy_random_policy_game_progression() {
+        test_policy_game_progression(GreedyRandomPolicy::new());
+    }
+
+    #[test]
+    fn test_greedy_random_policy_no_available_positions() {
+        test_policy_no_available_positions(GreedyRandomPolicy::new());
+    }
+
+    #[test]
+    fn test_greedy_random_policy_no_available_pieces() {
+        test_policy_no_available_pieces(GreedyRandomPolicy::new());
     }
 }
