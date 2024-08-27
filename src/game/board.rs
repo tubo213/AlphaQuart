@@ -87,32 +87,20 @@ impl Board {
         // 空いているセルを取得
         let available_positions = self.available_positions();
 
-        // 各属性のビットボードにおけるピースの属性
-        let attributes = [
-            (&self.color_board, piece.color()),
-            (&self.shape_board, piece.shape()),
-            (&self.height_board, piece.height()),
-            (&self.surface_board, piece.surface()),
-        ];
-
+        // 各空きセルに対してピースを置いてみる
         for (row, col) in available_positions {
-            let position = 1 << (row * 4 + col);
+            // 仮想的にピースを置いた状態を作成
+            let mut tmp_board = *self;
+            tmp_board.place_piece(row, col, piece).ok()?; // ピースを置く
 
-            for &(board, value) in &attributes {
-                let temp_board = if value == 0 {
-                    *board | position
-                } else {
-                    *board
-                };
-
-                // 勝利判定をビット演算で確認
-                if WINNING_MASKS.iter().any(|&mask| temp_board & mask == mask) {
-                    return Some((row, col)); // 勝利できる位置を返す
-                }
+            // もしその配置で勝利できるなら、そのセルを返す
+            if tmp_board.check_win() {
+                return Some((row, col));
             }
         }
 
-        None // 勝利できる位置が存在しない場合
+        // 勝利できるセルが見つからない場合はNoneを返す
+        None
     }
 
     pub fn is_full(&self) -> bool {
@@ -326,15 +314,38 @@ mod tests {
     }
 
     #[test]
-    fn test_find_winning_cell() {
+    fn test_find_winning_cell1() {
+        // 勝てる盤面を作成
         let mut board = Board::new();
-        let piece1 = Piece::new(0, 0, 0, 0);
-
+        let piece1 = Piece::new(0, 1, 0, 0);
+        let piece2 = Piece::new(0, 1, 0, 1);
+        let piece3 = Piece::new(0, 1, 1, 0);
+        let piece4 = Piece::new(1, 1, 1, 1);
         board.place_piece(0, 0, piece1).unwrap();
-        board.place_piece(0, 1, piece1).unwrap();
-        board.place_piece(0, 2, piece1).unwrap();
+        board.place_piece(0, 1, piece2).unwrap();
+        board.place_piece(0, 2, piece3).unwrap();
 
-        let winning_move = board.find_winning_cell(piece1);
+        let winning_move = board.find_winning_cell(piece4);
+        assert_eq!(
+            winning_move,
+            Some((0, 3)),
+            "勝利をもたらすセルが正しく検出されるべき"
+        );
+    }
+
+    #[test]
+    fn test_find_winning_cell2() {
+        // 勝てる盤面を作成
+        let mut board = Board::new();
+        let piece1 = Piece::new(0, 1, 0, 0);
+        let piece2 = Piece::new(0, 1, 0, 1);
+        let piece3 = Piece::new(0, 0, 1, 0);
+        let piece4 = Piece::new(0, 1, 1, 1);
+        board.place_piece(0, 0, piece1).unwrap();
+        board.place_piece(0, 1, piece2).unwrap();
+        board.place_piece(0, 2, piece3).unwrap();
+
+        let winning_move = board.find_winning_cell(piece4);
         assert_eq!(
             winning_move,
             Some((0, 3)),
