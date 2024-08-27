@@ -5,11 +5,11 @@ use rand::thread_rng;
 use rand::Rng;
 
 #[derive(Clone)]
-pub struct GreedyRandomPolicy {}
+pub struct OneStepLookAheadPolicy {}
 
-impl Policy for GreedyRandomPolicy {
+impl Policy for OneStepLookAheadPolicy {
     fn new() -> Self {
-        GreedyRandomPolicy {}
+        OneStepLookAheadPolicy {}
     }
 
     fn action(&self, game: &Game) -> Action {
@@ -81,11 +81,11 @@ impl Policy for GreedyRandomPolicy {
 mod tests {
     use super::*;
     use crate::game::Piece;
-    use crate::policies::greedy_random_policy::GreedyRandomPolicy;
+    use crate::policies::one_step_look_ahead_policy::OneStepLookAheadPolicy;
     use crate::policies::test_utils::*;
 
     #[test]
-    fn test_greedy_random_policy_wins_when_possible() {
+    fn test_one_step_look_ahead_policy_wins_when_possible() {
         // 勝てる盤面を作成
         let mut game = Game::new();
         let piece1 = Piece::new(0, 1, 0, 0);
@@ -98,7 +98,7 @@ mod tests {
         game.selected_piece = piece4;
 
         // 勝利する手を選ぶかチェック
-        let policy = GreedyRandomPolicy::new();
+        let policy = OneStepLookAheadPolicy::new();
         let action = policy.action(&game);
         // actionはrow=0, col=3の手を選ぶはず
         assert_eq!(action.row, 0, "行が正しい");
@@ -107,22 +107,22 @@ mod tests {
     }
 
     #[test]
-    fn test_greedy_random_policy_action() {
-        test_policy_action(GreedyRandomPolicy::new());
+    fn test_one_step_look_ahead_policy_action() {
+        test_policy_action(OneStepLookAheadPolicy::new());
     }
 
     #[test]
-    fn test_greedy_random_policy_game_progression() {
-        test_policy_game_progression(GreedyRandomPolicy::new());
+    fn test_one_step_look_ahead_policy_game_progression() {
+        test_policy_game_progression(OneStepLookAheadPolicy::new());
     }
 
     #[test]
-    fn test_greedy_random_policy_no_available_positions() {
-        test_policy_no_available_positions(GreedyRandomPolicy::new());
+    fn test_one_step_look_ahead_policy_no_available_positions() {
+        test_policy_no_available_positions(OneStepLookAheadPolicy::new());
     }
 
     #[test]
-    fn test_greedy_random_policy_no_available_pieces() {
-        test_policy_no_available_pieces(GreedyRandomPolicy::new());
+    fn test_one_step_look_ahead_policy_no_available_pieces() {
+        test_policy_no_available_pieces(OneStepLookAheadPolicy::new());
     }
 }
