@@ -15,6 +15,12 @@ impl Policy for OneStepLookAheadPolicy {
     fn action(&self, game: &Game) -> Action {
         let mut rng = thread_rng();
         let winning_cell = game.board.find_winning_cell(game.selected_piece);
+        let mut available_positions: Vec<(usize, usize)> = game.board.available_positions();
+        // 利用可能な位置がない場合のエラーチェック
+        if available_positions.is_empty() {
+            panic!("No available moves left.");
+        }
+        available_positions.shuffle(&mut rng);
 
         if winning_cell.is_some() {
             // 勝利する手がある場合は、その手を返す
@@ -26,16 +32,17 @@ impl Policy for OneStepLookAheadPolicy {
                 col: position.1,
                 piece_index: piece_index,
             };
+        } else if game.available_pieces.is_empty() {
+            // 勝利できる手がなくて，渡すpieceがない場合は，ランダムな場所に置く
+            let position = available_positions[0];
+            return Action {
+                row: position.0,
+                col: position.1,
+                piece_index: None,
+            };
         } else {
             // 勝利する手がない場合は、置いて、渡したときに負けない手を返す
-
-            // available_positionsとavailable_piecesをシャッフル
-            let mut available_positions: Vec<(usize, usize)> = game.board.available_positions();
-            // 利用可能な位置がない場合のエラーチェック
-            if available_positions.is_empty() {
-                panic!("No available moves left.");
-            }
-            available_positions.shuffle(&mut rng);
+            // available_piecesをシャッフル
             let mut available_pieces = game.available_pieces.clone();
             available_pieces.shuffle(&mut rng);
 
@@ -68,10 +75,10 @@ impl Policy for OneStepLookAheadPolicy {
         } else {
             piece_index = Some(rng.gen_range(0..game.available_pieces.len()));
         }
-        let available_positions = game.board.available_positions();
+        let position = available_positions[0];
         Action {
-            row: available_positions[0].0,
-            col: available_positions[0].1,
+            row: position.0,
+            col: position.1,
             piece_index: piece_index,
         }
     }
@@ -103,7 +110,6 @@ mod tests {
         // actionはrow=0, col=3の手を選ぶはず
         assert_eq!(action.row, 0, "行が正しい");
         assert_eq!(action.col, 3, "列が正しい");
-
     }
 
     #[test]
