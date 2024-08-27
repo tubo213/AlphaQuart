@@ -80,8 +80,31 @@ impl Policy for GreedyRandomPolicy {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::game::Piece;
     use crate::policies::greedy_random_policy::GreedyRandomPolicy;
     use crate::policies::test_utils::*;
+
+    #[test]
+    fn test_greedy_random_policy_wins_when_possible() {
+        // 勝てる盤面を作成
+        let mut game = Game::new();
+        let piece1 = Piece::new(0, 1, 0, 0);
+        let piece2 = Piece::new(0, 1, 0, 1);
+        let piece3 = Piece::new(0, 1, 1, 0);
+        let piece4 = Piece::new(1, 1, 1, 1);
+        game.board.place_piece(0, 0, piece1).unwrap();
+        game.board.place_piece(0, 1, piece2).unwrap();
+        game.board.place_piece(0, 2, piece3).unwrap();
+        game.selected_piece = piece4;
+
+        // 勝利する手を選ぶかチェック
+        let policy = GreedyRandomPolicy::new();
+        let action = policy.action(&game);
+        // actionはrow=0, col=3の手を選ぶはず
+        assert_eq!(action.row, 0, "行が正しい");
+        assert_eq!(action.col, 3, "列が正しい");
+
+    }
 
     #[test]
     fn test_greedy_random_policy_action() {
