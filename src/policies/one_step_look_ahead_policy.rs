@@ -25,6 +25,16 @@ impl Policy for OneStepLookAheadPolicy {
         if winning_cell.is_some() {
             // 勝利する手がある場合は、その手を返す
             let position = winning_cell.unwrap();
+            
+            // 渡すpieceがない場合は、Noneを返す
+            if game.available_pieces.is_empty() {
+                let piece_index = None;
+                return Action {
+                    row: position.0,
+                    col: position.1,
+                    piece_index: piece_index,
+                };
+            }
             // 渡すpieceはランダム
             let piece_index = Some(rng.gen_range(0..game.available_pieces.len()));
             return Action {
