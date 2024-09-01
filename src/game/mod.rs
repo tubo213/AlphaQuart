@@ -1,6 +1,8 @@
+pub mod action;
 pub mod board;
 pub mod piece;
 pub mod player;
+pub use action::Action;
 pub use board::Board;
 pub use piece::Piece;
 pub use player::Player;
@@ -97,6 +99,22 @@ impl Game {
         } else {
             None
         }
+    }
+
+    pub fn available_actions(&self) -> Vec<Action> {
+        let mut actions = vec![];
+        let available_positions = self.board.available_positions();
+        for (row, col) in available_positions {
+            for piece_index in 0..self.available_pieces.len() {
+                actions.push(Action {
+                    row,
+                    col,
+                    piece_index: Some(piece_index),
+                });
+            }
+        }
+
+        actions
     }
 
     pub fn to_json(&self) -> String {

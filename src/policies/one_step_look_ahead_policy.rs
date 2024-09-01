@@ -1,5 +1,6 @@
 use crate::game::Game;
-use crate::policies::policy::{Action, Policy};
+use crate::game::action::Action;
+use crate::policies::policy::Policy;
 use rand::prelude::SliceRandom;
 use rand::thread_rng;
 use rand::Rng;
