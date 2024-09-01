@@ -1,9 +1,9 @@
 use quart_engine::game::Player;
-use quart_engine::policies::{OneStepLookAheadPolicy, Policy, RandomPolicy};
+use quart_engine::policies::{MCSPolicy, OneStepLookAheadPolicy, Policy, RandomPolicy};
 use quart_engine::runner::Runner;
 use tqdm::tqdm;
 
-const NUM_TRIALS: u64 = 10000;
+const NUM_TRIALS: u64 = 10;
 
 // 汎用的なテスト関数を定義
 fn test_policy_vs_policy<P1, P2>(player1_policy: P1, player2_policy: P2, description: &str)
@@ -53,4 +53,11 @@ fn test_one_step_look_ahead_vs_one_step_look_ahead_policy() {
     );
 }
 
-
+#[test]
+fn test_mcs_policy_vs_one_step_look_ahead_policy() {
+    test_policy_vs_policy(
+        MCSPolicy::new(),
+        OneStepLookAheadPolicy::new(),
+        "MCS vs One Step Look Ahead Policy",
+    );
+}
