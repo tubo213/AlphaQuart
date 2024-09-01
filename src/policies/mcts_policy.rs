@@ -20,12 +20,25 @@ impl Node {
     }
 
     fn expand(&mut self) {
+        // 相手の手番を展開する
+        let mut child_init_states = vec![];
         for action in self.state.available_actions() {
             let mut child_state = self.state.clone();
             child_state
                 .play_turn(action.row, action.col, action.piece_index)
                 .unwrap();
-            self.children.push(Node::new(child_state));
+            child_init_states.push(child_state);
+        }
+
+        // 自分の手番を展開する
+        for init_state in child_init_states {
+            for action in init_state.available_actions() {
+                let mut child_state = init_state.clone();
+                child_state
+                    .play_turn(action.row, action.col, action.piece_index)
+                    .unwrap();
+                self.children.push(Node::new(child_state));
+            }
         }
     }
 }
