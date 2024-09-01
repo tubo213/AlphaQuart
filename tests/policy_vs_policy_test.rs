@@ -43,3 +43,14 @@ fn test_random_vs_one_step_look_ahead_policy() {
         "One Step Look Ahead vs Random Policy",
     );
 }
+
+#[test]
+fn test_one_step_look_ahead_vs_one_step_look_ahead_policy() {
+    test_policy_vs_policy(
+        OneStepLookAheadPolicy::new(),
+        OneStepLookAheadPolicy::new(),
+        "One Step Look Ahead vs One Step Look Ahead Policy",
+    );
+}
+
+
