@@ -56,7 +56,10 @@ fn test_one_step_look_ahead_vs_one_step_look_ahead_policy() {
 #[test]
 fn test_mcs_policy_vs_one_step_look_ahead_policy() {
     test_policy_vs_policy(
-        MCSPolicy::new(),
+        MCSPolicy {
+            policy: OneStepLookAheadPolicy::new(),
+            max_time: 0.001,
+        },
         OneStepLookAheadPolicy::new(),
         "MCS vs One Step Look Ahead Policy",
     );
